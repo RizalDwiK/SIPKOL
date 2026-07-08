@@ -176,7 +176,7 @@ with right:
 
 if predict:
 
-    API_URL = "http://127.0.0.1:8000/predict"
+    API_URL = "https://sipkolbreastcancer-x3i7n28e.b4a.run/predict"
 
     try:
 
