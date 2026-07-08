@@ -58,7 +58,7 @@ div[data-testid="stMetric"]{
 
 with st.sidebar:
 
-    st.title("🏥 Hospital")
+    st.title("🏥 SIPKOL")
 
     st.markdown("---")
 
@@ -176,7 +176,7 @@ with right:
 
 if predict:
 
-    API_URL = "https://sipkolbreastcancer-x3i7n28e.b4a.run/predict"
+    API_URL = "http://127.0.0.1:8000/predict"
 
     try:
 
@@ -193,6 +193,31 @@ if predict:
 
         probability = hasil["probability"]
 
-        
+        st.divider()
 
-        
+        col1,col2 = st.columns(2)
+
+        with col1:
+
+            st.metric(
+                "Prediction Probability",
+                f"{probability:.2%}"
+            )
+
+            st.progress(probability)
+
+        with col2:
+
+            if prediction.lower()=="malignant":
+
+                st.error("🔴 Malignant")
+
+            else:
+
+                st.success("🟢 Benign")
+
+    except Exception as e:
+
+        st.error("Tidak dapat terhubung ke API.")
+
+        st.exception(e)
