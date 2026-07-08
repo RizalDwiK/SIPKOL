@@ -68,7 +68,7 @@ for i in range(30):
     value=st.number_input(f"Feature {i+1}")
     inputs.append(value)
 if st.button("Predict"):
-    url="http://https://sipkol-jagkqkj9fcsvkbu5ip7nzn.streamlit.app//predict"
+    url="https://sipkol-jagkqkj9fcsvkbu5ip7nzn.streamlit.app//predict"
     response=requests.post(
         url,
         json={
