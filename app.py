@@ -193,15 +193,6 @@ if predict:
 
         probability = hasil["probability"]
 
-        st.divider()
+        
 
-        col1,col2 = st.columns(2)
-
-        with col1:
-
-            st.metric(
-                "Prediction Probability",
-                f"{probability:.2%}"
-            )
-
-            st.progress(probability)
+        
