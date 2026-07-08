@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # URL endpoint API FastAPI yang digunakan untuk prediksi
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "https://sipkolbreastcancer-va8q8xpl.b4a.run/predict"
 
 # Membuat session HTTP agar koneksi ke API dapat digunakan kembali
 session = requests.Session()
@@ -64,7 +64,7 @@ div[data-testid="stMetric"]{
 
 with st.sidebar:                    # Membuat sidebar
 
-    st.title("🏥 SIPKOL")           # Judul sidebar
+    st.title("🏥 Hospital")           # Judul sidebar
 
     st.markdown("---")              # Garis pemisah
 
