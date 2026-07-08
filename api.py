@@ -28,6 +28,11 @@ def home():
     return {"status":"SVM API Running"}
 
 @app.post("/predict")
+def root():
+    return {
+        "status": "API berjalan",
+        "message": "FastAPI berhasil dideploy."
+    }
 def predict(data:InputData):
 
     x=np.array(data.features).reshape(1,-1)
