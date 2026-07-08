@@ -58,7 +58,7 @@ div[data-testid="stMetric"]{
 
 with st.sidebar:
 
-    st.title("🏥 SIPKOL")
+    st.title("🏥 Hospital")
 
     st.markdown("---")
 
@@ -205,19 +205,3 @@ if predict:
             )
 
             st.progress(probability)
-
-        with col2:
-
-            if prediction.lower()=="malignant":
-
-                st.error("🔴 Malignant")
-
-            else:
-
-                st.success("🟢 Benign")
-
-    except Exception as e:
-
-        st.error("Tidak dapat terhubung ke API.")
-
-        st.exception(e)
