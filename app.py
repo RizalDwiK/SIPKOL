@@ -1,66 +1,72 @@
-import streamlit as st
-import requests
+import streamlit as st      # Library untuk membuat aplikasi web interaktif
+import requests             # Library untuk mengirim HTTP request ke API
 
-# ==========================
+# =====================================
 # KONFIGURASI HALAMAN
-# ==========================
+# =====================================
 
 st.set_page_config(
-    page_title="Breast Cancer Prediction",
-    page_icon="🩺",
-    layout="wide"
+    page_title="Breast Cancer Prediction",   # Judul halaman pada browser
+    page_icon="🩺",                           # Ikon halaman
+    layout="wide"                            # Menggunakan tampilan layar penuh
 )
 
-# ==========================
+# URL endpoint API FastAPI yang digunakan untuk prediksi
+API_URL = "https://sipkolbreastcancer-va8q8xpl.b4a.run/predict"
+
+# Membuat session HTTP agar koneksi ke API dapat digunakan kembali
+session = requests.Session()
+
+# =====================================
 # CSS
-# ==========================
+# =====================================
 
 st.markdown("""
 <style>
 
 .block-container{
-    padding-top:2rem;
-    padding-bottom:2rem;
+    padding-top:2rem;       /* Memberikan jarak bagian atas halaman */
+    padding-bottom:2rem;    /* Memberikan jarak bagian bawah halaman */
 }
 
 h1{
-    color:#1B365D;
-    font-weight:700;
+    color:#1B365D;          /* Warna judul */
+    font-weight:700;        /* Ketebalan huruf */
 }
 
 .stButton>button{
-    width:100%;
-    background:#1976D2;
-    color:white;
-    border-radius:10px;
-    height:50px;
-    font-size:18px;
-    font-weight:bold;
-    border:none;
+    width:100%;             /* Tombol memenuhi lebar container */
+    background:#1976D2;     /* Warna tombol */
+    color:white;            /* Warna teks */
+    border-radius:10px;     /* Membuat sudut tombol melengkung */
+    height:50px;            /* Tinggi tombol */
+    font-size:18px;         /* Ukuran font */
+    font-weight:bold;       /* Font tebal */
+    border:none;            /* Menghilangkan border */
 }
 
 .stButton>button:hover{
-    background:#125DA6;
+    background:#125DA6;     /* Warna tombol ketika diarahkan mouse */
 }
 
 div[data-testid="stMetric"]{
-    background:#F5F9FC;
-    border-radius:12px;
-    padding:15px;
+    background:#F5F9FC;     /* Warna latar metric */
+    border-radius:12px;     /* Sudut melengkung */
+    padding:15px;           /* Jarak isi metric */
 }
 
 </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)   # Mengizinkan HTML/CSS dijalankan
 
-# ==========================
+# =====================================
 # SIDEBAR
-# ==========================
+# =====================================
 
-with st.sidebar:
+with st.sidebar:                    # Membuat sidebar
 
-    st.title("🏥 SIPKOL")
+    st.title("🏥 SIPKOL")           # Judul sidebar
 
-    st.markdown("---")
+    st.markdown("---")              # Garis pemisah
 
     st.write("""
 ### Clinical Decision Support System
@@ -74,33 +80,28 @@ untuk memprediksi kemungkinan kanker payudara berdasarkan 30 fitur klinis pasien
 
     st.markdown("---")
 
-    st.success("Model Accuracy : 96%")
+    st.success("Model Accuracy : 96%")     # Menampilkan informasi akurasi model
 
-    st.info("""
-Masukkan seluruh data pasien kemudian tekan tombol **Predict**.
-""")
+    st.info("Masukkan seluruh data pasien kemudian klik **Predict**.")  # Petunjuk penggunaan
 
-# ==========================
+# =====================================
 # HEADER
-# ==========================
+# =====================================
 
-st.title("🩺 Breast Cancer Prediction")
+st.title("🩺 Breast Cancer Prediction")   # Judul utama aplikasi
 
-st.caption("Artificial Intelligence Clinical Decision Support System")
+st.caption("Artificial Intelligence Clinical Decision Support System")   # Subjudul
 
-st.divider()
+st.divider()                              # Garis pembatas
 
-# ==========================
-# LAYOUT
-# ==========================
-
-left,right = st.columns([2,1])
-
-# ==========================
-# INPUT
-# ==========================
+# =====================================
+# DAFTAR FITUR
+# =====================================
 
 feature_names = [
+
+# Daftar 30 fitur yang digunakan sebagai input model SVM
+
 "Radius Mean",
 "Texture Mean",
 "Perimeter Mean",
@@ -135,80 +136,71 @@ feature_names = [
 "Worst Fractal Dimension"
 ]
 
-inputs=[]
+# Membagi halaman menjadi dua kolom
+left, right = st.columns([2,1])
 
-with left:
+# =====================================
+# FORM INPUT
+# =====================================
 
-    with st.container(border=True):
+with left:                               # Kolom kiri untuk input
 
-        st.subheader("📋 Patient Clinical Features")
+    with st.form("prediction_form"):     # Form agar aplikasi tidak rerun setiap input berubah
 
-        for feature in feature_names:
+        with st.container(border=True):  # Membuat container dengan border
 
-            value = st.number_input(
-                feature,
-                value=0.0,
-                format="%.4f"
-            )
+            st.subheader("📋 Patient Clinical Features")
 
-            inputs.append(value)
+            inputs = []                  # Menyimpan seluruh nilai input
 
-# ==========================
-# HASIL
-# ==========================
+            for feature in feature_names:      # Melakukan perulangan sebanyak 30 fitur
 
-with right:
+                value = st.number_input(       # Membuat input angka
+                    feature,
+                    value=0.0,
+                    format="%.4f"
+                )
+
+                inputs.append(value)           # Menambahkan nilai ke dalam list
+
+        predict = st.form_submit_button(       # Tombol submit form
+            "🔍 Predict",
+            use_container_width=True
+        )
+
+# =====================================
+# HASIL PREDIKSI
+# =====================================
+
+with right:                            # Kolom kanan
 
     with st.container(border=True):
 
         st.subheader("📊 Prediction Result")
 
-        st.write("Klik tombol berikut untuk melakukan prediksi.")
+        # Mengecek apakah sudah pernah melakukan prediksi
+        if "prediction" not in st.session_state:
 
-        predict = st.button(
-            "🔍 Predict",
-            use_container_width=True
-        )
+            st.info("Silakan isi seluruh data pasien kemudian klik Predict.")
 
-# ==========================
-# PREDIKSI
-# ==========================
+        else:
 
-if predict:
+            # Mengambil hasil prediksi dari session_state
+            probability = st.session_state["probability"]
 
-    API_URL = "https://sipkolbreastcancer-va8q8xpl.b4a.run//predict"
+            prediction = st.session_state["prediction"]
 
-    try:
-
-        response = requests.post(
-            API_URL,
-            json={
-                "features":inputs
-            }
-        )
-
-        hasil = response.json()
-
-        prediction = hasil["prediction"]
-
-        probability = hasil["probability"]
-
-        st.divider()
-
-        col1,col2 = st.columns(2)
-
-        with col1:
-
+            # Menampilkan probabilitas prediksi
             st.metric(
                 "Prediction Probability",
                 f"{probability:.2%}"
             )
 
-            st.progress(probability)
+            # Menampilkan progress bar berdasarkan probabilitas
+            st.progress(float(probability))
 
-        with col2:
-
-            if prediction.lower()=="malignant":
+            # Menampilkan hasil klasifikasi
+            if prediction.lower() == "malignant":
 
                 st.error("🔴 Malignant")
 
@@ -216,8 +208,48 @@ if predict:
 
                 st.success("🟢 Benign")
 
+# =====================================
+# PROSES PREDIKSI
+# =====================================
+
+# Proses hanya dijalankan ketika tombol Predict ditekan
+if predict:
+
+    try:
+
+        # Menampilkan indikator loading
+        with st.spinner("Sedang melakukan prediksi..."):
+
+            # Mengirim data ke API menggunakan metode POST
+            response = session.post(
+                API_URL,
+                json={"features": inputs},
+                timeout=10         # Maksimal menunggu 10 detik
+            )
+
+            response.raise_for_status()    # Mengecek apakah request berhasil
+
+            hasil = response.json()        # Mengubah response JSON menjadi dictionary Python
+
+            # Menyimpan hasil prediksi ke session_state
+            st.session_state["prediction"] = hasil["prediction"]
+
+            st.session_state["probability"] = hasil["probability"]
+
+        st.rerun()     # Memuat ulang halaman agar hasil langsung ditampilkan
+
+    except requests.exceptions.Timeout:
+
+        st.error("⏱️ API timeout. Silakan coba beberapa saat lagi.")
+
+    except requests.exceptions.ConnectionError:
+
+        st.error("❌ Tidak dapat terhubung ke API.")
+
+    except requests.exceptions.HTTPError as e:
+
+        st.error(f"HTTP Error : {e}")
+
     except Exception as e:
 
-        st.error("Tidak dapat terhubung ke API.")
-
-        st.exception(e)
+        st.exception(e)      # Menampilkan detail error jika terjadi kesalahan
