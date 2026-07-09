@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # URL endpoint API FastAPI yang digunakan untuk prediksi
-API_URL = "https://sipkolbreastcancer-hyhbrqxg.b4a.run/predict"
+API_URL = "https://sipkolbreastcancer-nfo926pi.b4a.run/predict"
 
 # Membuat session HTTP agar koneksi ke API dapat digunakan kembali
 session = requests.Session()
